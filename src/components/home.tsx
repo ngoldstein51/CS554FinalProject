@@ -11,9 +11,9 @@ const Home = ():JSX.Element => {
 			<h1>
 				Welcome to Spotify Playlist Website
 			</h1>
-			<Link className="siteLink" to="/login">
-			Login with Spotify
-			</Link>
+			<a href="http://localhost:8888/login">
+				Login with Spotify
+			</a>
 
 		</div>
 	);
