@@ -55,7 +55,10 @@ const Playlists = (props:any) =>{
 	//TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
     const buildList = (playlist:any) => {
 		return (
-			<li key={playlist.id}><Link className="siteLink"  to={`/playlists/${playlist.id}`}>{playlist.name}</Link> </li>
+			<li key={playlist.id}><Link className="siteLink" to={{
+				pathname: `/playlists/${playlist.id}`,
+				state: [{ token: props.location.state[0].token }]
+			}}>{playlist.name}</Link> </li>
 		);
 	};
 

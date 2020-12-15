@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//import axios from 'axios';
+import axios from 'axios';
 
 //Fake data for testing
 const fakeData:object=
@@ -8,7 +8,19 @@ const fakeData:object=
 	album:"album3"
 	}
 
-
+const getSong = async (tok: string, id: string) => {
+	try {
+		const reqUrl = 'https://api.spotify.com/v1/tracks/' + id;
+		const { data } = await axios.get(reqUrl, {
+			headers: {
+				Authorization: 'Bearer ' + tok
+			}
+		});
+		return data;
+	} catch (e) {
+		throw new Error("Request failed");
+	}
+}
 
 
 const Song = (props:any) =>{
@@ -20,11 +32,12 @@ const Song = (props:any) =>{
     useEffect(():void => {
 		async function fetchData() {
 			setLoading(true)
-			//TODO: API call
-			setSongData(fakeData)
+
+			const song = await getSong(props.location.state[0].token, props.match.params.id);
+			
+			setSongData(song)
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
 			setId(props.match.params.id)
-
 
 			setLoading(false)
 			
@@ -50,7 +63,7 @@ const Song = (props:any) =>{
                     <h1>Title</h1>
 					<p>{songData["name"]}: {id}</p>
 					<h1>Album</h1>
-					<p>{songData["album"]}</p>
+					<p>{songData["album"]["name"]}</p>
                     <br />
                     <br />
                 </div>
