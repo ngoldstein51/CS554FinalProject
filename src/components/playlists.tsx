@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//import axios from 'axios';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 //Fake data for testing
@@ -12,25 +12,40 @@ const fakeData:Array<object>=[
 	name:"playlist3"}
 ]
 
-
-
 const Playlists = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ playlistData, setPlaylistData]=useState<Array<object>>([]);
     const [ pageNum, setPageNum ] = useState<number>(NaN);
     let list:Array<object> = [];
 
+	const getPlayLists = async (tok: string) => {
+		try {
+			const reqUrl = 'https://api.spotify.com/v1/me/playlists';
+			const { data } = await axios.get(reqUrl, {
+				headers: {
+					Authorization: 'Bearer ' + tok
+				}
+			});
+			return data;
+		} catch (e) {
+			throw new Error("Request failed");
+		}
+	}
+
     //load
     useEffect(():void => {
 		async function fetchData() {
-			setLoading(true)
-			//TODO: API call
-			setPlaylistData(fakeData)
+			setLoading(true);
+
+			const playlists = await getPlayLists(props.location.state[0].token);
+
+			console.log(playlists.items);
+
+			setPlaylistData(playlists.items);
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
-			setPageNum(props.match.params.pagenum)
+			setPageNum(props.match.params.pagenum);
 
-
-			setLoading(false)
+			setLoading(false);
 			
 		}
 		fetchData();
@@ -60,17 +75,17 @@ const Playlists = (props:any) =>{
 				return buildList(playlist);
 
     });
-			//TODO: pagination
-            return (
-                <div>
-                    <h1>Playlists Page: {pageNum}</h1>
-                    <br />
-                    <br />
-                    <ul>
-                        {list}
-                    </ul>
-                </div>
-            );
+		//TODO: pagination
+		return (
+			<div>
+				<h1>Playlists Page: {pageNum}</h1>
+				<br />
+				<br />
+				<ul>
+					{list}
+				</ul>
+			</div>
+		);
 
     }
 };

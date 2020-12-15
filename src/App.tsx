@@ -19,7 +19,7 @@ function App() {
       <Route exact path='/login/' component={Login} />
       <Route exact path='/songs/page/:pagenum' component={Songs} />
       <Route exact path='/songs/:id' component={Song} />
-      <Route exact path='/playlists/page/:pagenum' component={Playlists} />
+      <Route exact path='/playlists/' component={Playlists} />
       <Route exact path='/playlists/:id' component={Playlist} />
       </div>
     </div>

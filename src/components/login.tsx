@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 interface Spotify {
   display_name: string,
@@ -26,12 +27,12 @@ const Login = (props: any):JSX.Element => {
     return hashParams;
   }
 
-  const makeRequest = async () => {
-		try {
+  const makeRequest = async (tok: string) => {
+    try {
       const reqUrl = 'https://api.spotify.com/v1/me';
       const { data } = await axios.get(reqUrl, {
         headers: {
-          Authorization: 'Bearer ' + token 
+          Authorization: 'Bearer ' + tok 
         }
        });
 			return data;
@@ -48,10 +49,11 @@ const Login = (props: any):JSX.Element => {
           console.log(params);
           let access_token = params.access_token;
           let refresh_token = params.refresh_token;
+
           setToken(access_token);
 
-          let resp = await makeRequest();
-          console.log(resp);
+          let resp = await makeRequest(access_token);
+
           setExResp(resp);
 
         } catch (e) {
@@ -65,7 +67,22 @@ const Login = (props: any):JSX.Element => {
   let noBody = 'Goodbye!';
 	return (
 		<div>
-      {exResp !== undefined && token !== undefined ? 
+      <h1>
+        Login Page
+      </h1>
+
+      <Link className='link' to='/login'>
+        Home
+      </Link>
+      <Link className='link' to={{
+        pathname: "/playlists",
+        state: [{ token: token}]
+      }}>
+        Playlists
+      </Link>
+      
+
+      {/* {exResp !== undefined && token !== undefined ? 
       <div>
          <dl>
             <dt>Display name</dt><dd>{exResp1.display_name}</dd>
@@ -77,7 +94,7 @@ const Login = (props: any):JSX.Element => {
             <dt>Country</dt><dd>{exResp.country}</dd>
           </dl>
       </div>
-      : noBody}
+      : noBody} */}
 		</div>
 	);
 };

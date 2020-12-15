@@ -9,9 +9,6 @@ const fakeData:object=
 	tracks:[{id:1,name:"track1"},{id:2,name:"track2"},{id:3,name:"track3"}]
 	}
 
-
-
-
 const Playlist = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ playlistData, setPlaylistData]=useState<any>([]);
