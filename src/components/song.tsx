@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import BarChart from './BarChart';
 
 //Fake data for testing
 const fakeData:object=
@@ -7,6 +8,13 @@ const fakeData:object=
 	name:"track1",
 	album:"album3"
 	}
+
+const state:any = {
+	data: [120, 1, 7, 6, 9, 10],
+	width: 700,
+	height: 500,
+	id: "root"
+}
 
 const getSong = async (tok: string, id: string) => {
 	try {
@@ -26,7 +34,8 @@ const getSong = async (tok: string, id: string) => {
 const Song = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ songData, setSongData]=useState<any>([]);
-    const [ id	, setId ] = useState<number>(NaN);
+	const [ id	, setId ] = useState<number>(NaN);
+	const [ track, setTrack ] = useState<string>("");
 
     //load
     useEffect(():void => {
@@ -34,8 +43,9 @@ const Song = (props:any) =>{
 			setLoading(true)
 
 			const song = await getSong(props.location.state[0].token, props.match.params.id);
-			
+			console.log(song);
 			setSongData(song)
+			setTrack(song["uri"]);
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
 			setId(props.match.params.id)
 
@@ -58,18 +68,20 @@ const Song = (props:any) =>{
     }
 	//Build list of songs in playlist			//TODO: pagination
 	else{
+			console.log(state.data);
             return (
                 <div>
                     <h1>Title</h1>
 					<p>{songData["name"]}: {id}</p>
 					<h1>Album</h1>
 					<p>{songData["album"]["name"]}</p>
+					<img src={songData["album"]["images"][1]["url"]} alt="album art"/>
                     <br />
                     <br />
+					<BarChart data={state.data} height={state.height} width={state.width} id={state.id}/>
                 </div>
 			);
 		}
-
-    };
+};
 
 export default Song;
