@@ -18,7 +18,6 @@ const state: any = {
 	id: "root"
 }
 
-<<<<<<< HEAD
 const Song = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ songData, setSongData]=useState<any>([]);
