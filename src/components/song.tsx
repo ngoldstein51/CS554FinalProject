@@ -16,21 +16,6 @@ const state:any = {
 	id: "root"
 }
 
-const getSong = async (tok: string, id: string) => {
-	try {
-		const reqUrl = 'https://api.spotify.com/v1/tracks/' + id;
-		const { data } = await axios.get(reqUrl, {
-			headers: {
-				Authorization: 'Bearer ' + tok
-			}
-		});
-		return data;
-	} catch (e) {
-		throw new Error("Request failed");
-	}
-}
-
-
 const Song = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ songData, setSongData]=useState<any>([]);
@@ -42,7 +27,8 @@ const Song = (props:any) =>{
 		async function fetchData() {
 			setLoading(true)
 
-			const song = await getSong(props.location.state[0].token, props.match.params.id);
+			const songResp: any = await axios.get('http://localhost:8888/spotify-song?tok='+props.location.state[0].token+'&id='+props.match.params.id);
+			const song: any = songResp['data'];
 			console.log(song);
 			setSongData(song)
 			setTrack(song["uri"]);

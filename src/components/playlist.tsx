@@ -13,29 +13,17 @@ const Playlist = (props:any) =>{
     const [ loading, setLoading ] = useState<boolean>(true);
     const [ playlistData, setPlaylistData]=useState<any>([]);
     const [ id	, setId ] = useState<number>(NaN);
-    let list:Array<object> = [];
-
-	const getPlayList = async (tok: string, id: string) => {
-		try {
-			const reqUrl = 'https://api.spotify.com/v1/playlists/' + id;
-			const { data } = await axios.get(reqUrl, {
-				headers: {
-					Authorization: 'Bearer ' + tok
-				}
-			});
-			return data;
-		} catch (e) {
-			throw new Error("Request failed");
-		}
-	}
-
-
+	let list:Array<object> = [];
+	
     //load
     useEffect(():void => {
 		async function fetchData() {
-			setLoading(true)
+			setLoading(true);
+			console.log('e');
 
-			const playlist = await getPlayList(props.location.state[0].token, props.match.params.id);
+			const playlistResp = await axios.get('http://localhost:8888/spotify-playlist?tok='+props.location.state[0].token+'&id='+props.match.params.id);
+			const playlist = playlistResp['data'];
+			console.log(playlist);
 			setPlaylistData(playlist)
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
 			setId(props.match.params.id)
