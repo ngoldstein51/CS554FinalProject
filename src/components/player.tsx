@@ -92,7 +92,7 @@ const Player = (props: any): JSX.Element => {
                             startPlayback(props.uri);
                         } else {
                             if (playbackPaused) {
-                                resumePlayback();
+                                startPlayback(props.uri);
                             }
                         }
                     }}>
