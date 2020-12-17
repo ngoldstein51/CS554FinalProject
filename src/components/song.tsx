@@ -4,13 +4,6 @@ import Player from './player';
 import BarChart from './BarChart';
 import {FaPlay} from 'react-icons/fa';
 
-//Fake data for testing
-const fakeData: object =
-{
-	id: 1,
-	name: "track1",
-	album: "album3"
-}
 
 const state: any = {
 	data: [120, 1, 7, 6, 9, 10],
@@ -19,35 +12,21 @@ const state: any = {
 	id: "root"
 }
 
-const getSong = async (tok: string, id: string) => {
-	try {
-		const reqUrl = 'https://api.spotify.com/v1/tracks/' + id;
-		const { data } = await axios.get(reqUrl, {
-			headers: {
-				Authorization: 'Bearer ' + tok
-			}
-		});
-		return data;
-	} catch (e) {
-		throw new Error("Request failed");
-	}
-}
-
-
-const Song = (props: any) => {
-	const [loading, setLoading] = useState<boolean>(true);
-	const [songData, setSongData] = useState<any>([]);
-	const [id, setId] = useState<number>(NaN);
-	const [track, setTrack] = useState<string>("");
+const Song = (props:any) =>{
+    const [ loading, setLoading ] = useState<boolean>(true);
+    const [ songData, setSongData]=useState<any>([]);
+	const [ id	, setId ] = useState<number>(NaN);
+	const [ track, setTrack ] = useState<string>("");
 
 	//load
 	useEffect((): void => {
 		async function fetchData() {
-			setLoading(true)
-
-			const song = await getSong(props.location.state[0].token, props.match.params.id);
+			setLoading(true);
+			const songResp: any = await axios.get('http://localhost:8888/spotify-song?tok='+props.location.state[0].token+'&id='+props.match.params.id);
+			const song: any = songResp['data'];
 			setSongData(song)
 			setTrack(song["uri"]);
+			
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
 			setId(props.match.params.id)
 
@@ -55,13 +34,13 @@ const Song = (props: any) => {
 
 		}
 		fetchData();
-	}, [props.match.params.id]);
+	}, [props.match.params.id,props.location.state]);
 
 	//Builds list of character links
 	//TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
 
 	console.log(songData);
-
+	console.log(track)
 	if (loading) {
 		return (
 			<div>
