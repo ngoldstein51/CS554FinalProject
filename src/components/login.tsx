@@ -3,15 +3,15 @@ import axios from 'axios';
 import '../App.css';
 import { Link } from 'react-router-dom';
 
-interface Spotify {
-  display_name: string,
-  id: string,
-  email: string,
-  external_urls: any,
-  href: string,
-  images: any,
-  country: string
-}
+// interface Spotify {
+//   display_name: string,
+//   id: string,
+//   email: string,
+//   external_urls: any,
+//   href: string,
+//   images: any,
+//   country: string
+// }
 
 const Login = (props: any):JSX.Element => {
   const [ token, setToken ] = useState(undefined);
@@ -21,8 +21,10 @@ const Login = (props: any):JSX.Element => {
     var hashParams: any = {};
     var e, r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
-    while ( e = r.exec(q)) {
+    e = r.exec(q)
+    while ( e!=null) {
        hashParams[e[1]] = decodeURIComponent(e[2]);
+       e = r.exec(q)
     }
     return hashParams;
   }
@@ -48,7 +50,7 @@ const Login = (props: any):JSX.Element => {
           let params = getHashParams();
           console.log(params);
           let access_token = params.access_token;
-          let refresh_token = params.refresh_token;
+          //let refresh_token = params.refresh_token;
 
           setToken(access_token);
 
@@ -64,7 +66,9 @@ const Login = (props: any):JSX.Element => {
     },
     []
   )
-  let noBody = 'Goodbye!';
+  //let noBody = 'Goodbye!';
+  console.log(exResp);
+  
 	return (
 		<div>
       <h1>

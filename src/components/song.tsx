@@ -3,13 +3,6 @@ import axios from 'axios';
 import Player from './player';
 import BarChart from './BarChart';
 
-//Fake data for testing
-const fakeData: object =
-{
-	id: 1,
-	name: "track1",
-	album: "album3"
-}
 
 const state: any = {
 	data: [120, 1, 7, 6, 9, 10],
@@ -32,6 +25,7 @@ const Song = (props:any) =>{
 			const song: any = songResp['data'];
 			setSongData(song)
 			setTrack(song["uri"]);
+			
 			//Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
 			setId(props.match.params.id)
 
@@ -39,13 +33,13 @@ const Song = (props:any) =>{
 
 		}
 		fetchData();
-	}, [props.match.params.id]);
+	}, [props.match.params.id,props.location.state]);
 
 	//Builds list of character links
 	//TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
 
 	console.log(songData);
-
+	console.log(track)
 	if (loading) {
 		return (
 			<div>

@@ -7,39 +7,40 @@ const Player = (props: any): JSX.Element => {
     const [playbackPaused, setPlaybackPaused] = useState(true);
     const [spotifyDeviceId, setDeviceId] = useState<string>();
 
-    let spotifyPlayer: Spotify.SpotifyPlayer;
+    
 
     console.log('Token:', props.token);
     console.log('Song ID:', props.uri);
 
-    const createPlayer = () => {
-        // Create the player object
-        const player = new Spotify.Player({
-            name: 'Spotify Web Player',
-            getOAuthToken: cb => { cb(props.token) }
-        })
-        console.log('Player has been created');
-        spotifyPlayer = player;
-
-        // Ready
-        spotifyPlayer?.addListener('ready', ({ device_id }) => {
-            console.log('Web Device ID:', device_id);
-            setDeviceId(device_id);
-        });
-
-        spotifyPlayer?.addListener('not_ready', ({ device_id }) => {
-            console.log('Device ID is not ready for playback', device_id);
-        });
-
-        // Connect
-        spotifyPlayer?.connect().then(() => {
-            console.log('Spotify Web Player Connected');
-            setPlayerReady(true);
-        });
-
-    };
-
     useEffect(() => {
+        let spotifyPlayer: Spotify.SpotifyPlayer;
+        const createPlayer = () => {
+            // Create the player object
+            const player = new Spotify.Player({
+                name: 'Spotify Web Player',
+                getOAuthToken: cb => { cb(props.token) }
+            })
+            console.log('Player has been created');
+            spotifyPlayer = player;
+    
+            // Ready
+            spotifyPlayer?.addListener('ready', ({ device_id }) => {
+                console.log('Web Device ID:', device_id);
+                setDeviceId(device_id);
+            });
+    
+            spotifyPlayer?.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID is not ready for playback', device_id);
+            });
+    
+            // Connect
+            spotifyPlayer?.connect().then(() => {
+                console.log('Spotify Web Player Connected');
+                setPlayerReady(true);
+            });
+    
+        };
+    
         // Add script to body of document
         const script = document.createElement('script');
         script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -52,7 +53,7 @@ const Player = (props: any): JSX.Element => {
         return () => {
             document.body.removeChild(script);
         }
-    }, []);
+    }, [props.token]);
 
     const pauseTrack = () => {
         fetch("https://api.spotify.com/v1/me/player/pause?device_id=" + spotifyDeviceId, {
