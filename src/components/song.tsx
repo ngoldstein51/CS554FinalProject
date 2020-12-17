@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Player from './player';
 import BarChart from './BarChart';
+import {FaPlay} from 'react-icons/fa';
 
 //Fake data for testing
 const fakeData: object =
@@ -73,12 +74,17 @@ const Song = (props: any) => {
 		return (
 			<div>
 				<h1>Title</h1>
+				<div onClick={() => {
+					props.setURI(songData['uri']);
+					props.setOffset(-1);
+				}}>
+					<FaPlay />
+				</div>
 				<p>{songData["name"]}: {id}</p>
 				<h1>Album</h1>
 				<p>{songData["album"]["name"]}</p>
 				<br />
 				<br />
-				<Player token={props.location.state[0].token} uri={songData['uri']} />
 				<BarChart data={state.data} height={state.height} width={state.width} id={state.id} />
 			</div>
 		);

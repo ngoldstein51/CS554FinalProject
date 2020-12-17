@@ -1,114 +1,179 @@
 import { useEffect, useState } from 'react';
+import { isConstructorDeclaration } from 'typescript';
+import {FaPlay, FaPause} from 'react-icons/fa';
 import '../App.css';
 
-const Player = (props: any): JSX.Element => {
-    const [playerReady, setPlayerReady] = useState(false);
-    const [playbackOn, setPlaybackOn] = useState(false);
-    const [playbackPaused, setPlaybackPaused] = useState(true);
-    const [spotifyDeviceId, setDeviceId] = useState<string>();
+interface props {
+  token: string,
+  uri: string,
+  offset: number
+};
 
-    let spotifyPlayer: Spotify.SpotifyPlayer;
+const Player = ({ token, uri, offset }: props): JSX.Element => {
+  const [playerReady, setPlayerReady] = useState(false);
+  const [playbackOn, setPlaybackOn] = useState(false);
+  const [playbackPaused, setPlaybackPaused] = useState(false);
+  const [spotifyDeviceId, setDeviceId] = useState<string>();
+  const [trackName, setTrackName] = useState<string>('No Track');
 
-    console.log('Token:', props.token);
-    console.log('Song ID:', props.uri);
+  let spotifyPlayer: Spotify.SpotifyPlayer;
 
+  useEffect(() => {
+    console.log('Player -> token:', token);
     const createPlayer = () => {
-        // Create the player object
-        const player = new Spotify.Player({
-            name: 'Spotify Web Player',
-            getOAuthToken: cb => { cb(props.token) }
-        })
-        console.log('Player has been created');
-        spotifyPlayer = player;
+      // Create the player object
+      const player = new Spotify.Player({
+        name: 'Spotify Web Player',
+        getOAuthToken: cb => { cb(token) }
+      })
+      console.log('Player has been created');
+      spotifyPlayer = player;
 
-        // Ready
-        spotifyPlayer?.addListener('ready', ({ device_id }) => {
-            console.log('Web Device ID:', device_id);
-            setDeviceId(device_id);
-        });
+      // Ready
+      spotifyPlayer?.addListener('ready', ({ device_id }) => {
+        console.log('Web Device ID:', device_id);
+        setDeviceId(device_id);
+      });
 
-        spotifyPlayer?.addListener('not_ready', ({ device_id }) => {
-            console.log('Device ID is not ready for playback', device_id);
-        });
+      spotifyPlayer?.addListener('not_ready', ({ device_id }) => {
+        console.log('Device ID is not ready for playback', device_id);
+      });
 
-        // Connect
-        spotifyPlayer?.connect().then(() => {
-            console.log('Spotify Web Player Connected');
-            setPlayerReady(true);
-        });
+      // Connect
+      spotifyPlayer?.connect().then(() => {
+        console.log('Spotify Web Player Connected');
+        setPlayerReady(true);
+      });
 
     };
-
-    useEffect(() => {
-        // Add script to body of document
-        const script = document.createElement('script');
-        script.src = "https://sdk.scdn.co/spotify-player.js";
-        script.async = true;
-        // Add listener for onLoad event
-        window.onSpotifyWebPlaybackSDKReady = () => {
-            createPlayer();
-        };
-        document.body.appendChild(script);
-        return () => {
-            document.body.removeChild(script);
-        }
-    }, []);
-
-    const pauseTrack = () => {
-        fetch("https://api.spotify.com/v1/me/player/pause?device_id=" + spotifyDeviceId, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + props.token
-            },
-        }).then((ev) => {
-            setPlaybackPaused(true);
-            setPlaybackOn(false);
-        })
+    if (token !== '') {
+      // Add script to body of document
+      const script = document.createElement('script');
+      script.src = "https://sdk.scdn.co/spotify-player.js";
+      script.async = true;
+      // Add listener for onLoad event
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        createPlayer();
+      };
+      document.body.appendChild(script);
+      return () => {
+        document.body.removeChild(script);
+      }
     }
+  }, [token]);
 
-    const startPlayback = (spotify_uri: string) => {
-        console.log('Device ID:', spotifyDeviceId)
-        const url: string = 'https://api.spotify.com/v1/me/player/play?device_id=' + spotifyDeviceId;
-        fetch(url, {
-            method: 'PUT',
-            body: JSON.stringify({ uris: [spotify_uri] }),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + props.token
-            },
-        });
+  function getCurrentPlayback() {
+    fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+    }).then(response => response.text())
+    .then((response) => {
+        const track = JSON.parse(response);
+        setTrackName(track.item.name);
+    })
+    .catch(err => console.log('Ignore error'));
+  }
+
+  const pauseTrack = () => {
+    fetch("https://api.spotify.com/v1/me/player/pause?device_id=" + spotifyDeviceId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+    }).then((ev) => {
+      setPlaybackPaused(true);
+      setPlaybackOn(false);
+      console.log('Pausing song');
+    })
+  }
+
+  const startPlayback = (spotify_uri: string) => {
+    console.log('Device ID:', spotifyDeviceId)
+    console.log('Spotify URI:', spotify_uri);
+    const url: string = 'https://api.spotify.com/v1/me/player/play?device_id=' + spotifyDeviceId;
+    if (spotify_uri.includes('track:')) {
+      // If playing just one track
+      fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({ uris: [spotify_uri] }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      }).then((ev) => {
         setPlaybackOn(true);
         setPlaybackPaused(false);
-        console.log('playing a song?')
+        getCurrentPlayback();
+        console.log('Playing song');
+      });
+    } else {
+      // If playing playlist
+      fetch(url, {
+        method: 'PUT',
+        body: JSON.stringify({ context_uri: spotify_uri, offset: {position: offset} }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+      }).then((ev) => {
+        setPlaybackOn(true);
+        setPlaybackPaused(false);
+        getCurrentPlayback();
+        console.log('Playing song');
+      });
     }
+  }
 
-    return (
-        <div>
-            <div>
-                {playerReady &&
-                    <div onClick={() => {
-                        if (!playbackOn) {
-                            startPlayback(props.uri);
-                        } else {
-                            if (playbackPaused) {
-                                startPlayback(props.uri);
-                            }
-                        }
-                    }}>
-                        <p>Play</p>
-                    </div>}
-                {playerReady && playbackOn &&
-                    <div onClick={() => {
-                        if (!playbackPaused) {
-                            pauseTrack();
-                        }
-                    }}>
-                        <p>Pause</p>
-                    </div>}
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    console.log('Player -> uri:', uri);
+    startPlayback(uri);
+  }, [uri, offset]);
+
+  const resumePlayback = () => {
+    fetch("https://api.spotify.com/v1/me/player/play?device_id=" + spotifyDeviceId, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+    }).then((ev) => {
+      setPlaybackOn(true);
+      setPlaybackPaused(false);
+      console.log('Resuming song');
+    });
+  }
+
+  return (
+    <div>
+      <div>
+      {playerReady && <p>Playing: {trackName} </p>}
+        {playerReady && (trackName !== 'No Track') && (!playbackOn) &&
+          <div onClick={() => {
+            if (!playbackOn && (!playbackPaused)) {
+              startPlayback(uri);
+            } else {
+              if (playbackPaused) {
+                resumePlayback();
+              }
+            }
+          }}>
+            <FaPlay/>
+          </div>}
+        {playerReady && (trackName !== 'No Track') && playbackOn &&
+          <div onClick={() => {
+            if (!playbackPaused) {
+              pauseTrack();
+            }
+          }}>
+            <FaPause/>
+          </div>}
+      </div>
+    </div>
+  );
 };
 
 export default Player;

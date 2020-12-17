@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../App.css';
 import { Link } from 'react-router-dom';
+import { access } from 'fs';
 
 interface Spotify {
   display_name: string,
@@ -49,9 +50,9 @@ const Login = (props: any):JSX.Element => {
           console.log(params);
           let access_token = params.access_token;
           let refresh_token = params.refresh_token;
-
+          // console.log('passback:', access_token);
+          props.passBackToken(access_token);
           setToken(access_token);
-
           let resp = await makeRequest(access_token);
 
           setExResp(resp);
