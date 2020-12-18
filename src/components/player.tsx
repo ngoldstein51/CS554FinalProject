@@ -16,10 +16,10 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
   const [spotifyDeviceId, setDeviceId] = useState<string>();
   const [trackName, setTrackName] = useState<string>("No Track");
 
-  let spotifyPlayer: Spotify.SpotifyPlayer;
-
+  
   useEffect(() => {
-    console.log("Player -> token:", token);
+    console.log('Player -> token:', token);
+    let spotifyPlayer: Spotify.SpotifyPlayer;
     const createPlayer = () => {
       // Create the player object
       const player = new Spotify.Player({
@@ -119,11 +119,8 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
     } else {
       // If playing playlist
       fetch(url, {
-        method: "PUT",
-        body: JSON.stringify({
-          context_uri: spotify_uri,
-          offset: { position: offset },
-        }),
+        method: 'PUT',
+        body: JSON.stringify({ context_uri: spotify_uri, offset: { position: offset } }),
         headers: {
           "Content-Type": "application/json",
           Authorization: "Bearer " + token,
@@ -140,6 +137,7 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
   useEffect(() => {
     console.log("Player -> uri:", uri);
     startPlayback(uri);
+    // eslint-disable-next-line
   }, [uri, offset]);
 
   const resumePlayback = () => {
