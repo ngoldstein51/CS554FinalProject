@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Player from './player';
 import BarChart from './BarChart';
 import {FaPlay} from 'react-icons/fa';
-
 
 const state: any = {
 	data: [120, 1, 7, 6, 9, 10],

@@ -2,17 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../App.css';
 import { Link } from 'react-router-dom';
-import { access } from 'fs';
-
-// interface Spotify {
-//   display_name: string,
-//   id: string,
-//   email: string,
-//   external_urls: any,
-//   href: string,
-//   images: any,
-//   country: string
-// }
 
 const Login = (props: any):JSX.Element => {
   const [ token, setToken ] = useState(undefined);

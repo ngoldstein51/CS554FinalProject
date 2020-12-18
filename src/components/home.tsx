@@ -1,6 +1,4 @@
-import React from 'react';
 import '../App.css';
-
 
 const Home = ():JSX.Element => {
 	//TODO: make it so homepage redirects you to playlists if logged in.
