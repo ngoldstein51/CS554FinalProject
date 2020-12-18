@@ -11,6 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import "../App.css";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -57,11 +58,11 @@ const Playlists = (props: any) => {
   useEffect((): void => {
     async function fetchData() {
       setLoading(true);
-      console.log(props.location.state[0].token);
+
       const playlists = await getPlayLists(props.location.state[0].token);
 
       setPlaylistData(playlists.items);
-      console.log(playlists.items);
+   
       //Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
       setPageNum(props.match.params.pagenum);
 

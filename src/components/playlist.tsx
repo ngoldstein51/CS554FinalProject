@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { PieChart } from "react-d3-components";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -11,6 +12,20 @@ import {
   Button,
 } from "@material-ui/core";
 import { FaPlay } from "react-icons/fa";
+
+interface DataPoint {
+  x: any, y: any
+}
+interface DataSet {
+  label: string, values: Array<DataPoint>
+}
+
+var data:DataSet = {
+  label: 'Popularity',
+  values: []
+};
+
+var sort: any = null;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,14 +63,12 @@ function millisToMinutesAndSeconds(millis: number) : string {
 const Playlist = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [playlistData, setPlaylistData] = useState<any>([]);
-  const [id, setId] = useState<number>(NaN);
   const classes = useStyles();
   let card: Array<any> = [];
   //load
   useEffect((): void => {
     async function fetchData() {
       setLoading(true);
-      console.log("e");
 
       const playlistResp = await axios.get(
         "http://localhost:8888/spotify-playlist?tok=" +
@@ -64,10 +77,25 @@ const Playlist = (props: any) => {
           props.match.params.id
       );
       const playlist = playlistResp["data"];
+
       console.log(playlist);
+
+      let artists: { [x: string]: number; } = {};
+      
+      data.values = [];
+
+      for(let i=0;i<playlist["tracks"]["items"].length;i++){
+        let name = playlist["tracks"]["items"][i]["track"]["artists"][0]["name"];
+        if (name in artists){
+          artists[name] += 1;
+        } else {
+          artists[name] = 1;
+        }
+      }
+      for (let i = 0; i < Object.keys(artists).length;i++){
+        data.values.push({ x: Object.keys(artists)[i], y: artists[Object.keys(artists)[i]] });
+      }
       setPlaylistData(playlist);
-      //Check if pagenum is valid and in bounds, if invalid or out of bounds goto page 0, need api call for bounds
-      setId(props.match.params.id);
 
       setLoading(false);
     }
@@ -76,7 +104,7 @@ const Playlist = (props: any) => {
 
   //Builds list of character links
   //TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
-  console.log(id);
+
   const buildCard = (song: any, index: number, playlist: string) => {
     return (
       <Grid item xs={12} key={song.track.id}>
@@ -144,6 +172,13 @@ const Playlist = (props: any) => {
 
         <br />
         <br />
+        <PieChart
+          data={data}
+          width={1000}
+          height={400}
+          margin={{ top: 10, bottom: 10, left: 100, right: 100 }}
+          sort={sort}
+        />
         <Grid container spacing={10}>
           {card}
         </Grid>

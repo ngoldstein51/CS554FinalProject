@@ -24,8 +24,8 @@ class BarChart extends Component<
       .data(data)
       .enter()
       .append("rect")
-      .attr("x", (d, i) => i * 70)
-      .attr("y", (d, i) => this.props.height - 10 * d)
+      .attr("x", (d, i) => i * (this.props.width / this.props.data.length))
+      .attr("y", (d, i) => this.props.height * (d / 100))
       .attr("width", 65)
       .attr("height", (d, i) => d * 10)
       .attr("fill", "green");
