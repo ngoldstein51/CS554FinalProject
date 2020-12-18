@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { PieChart } from "react-d3-components";
-import { Link } from "react-router-dom";
+import { Redirect,Link } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -69,7 +69,7 @@ const Playlist = (props: any) => {
   useEffect((): void => {
     async function fetchData() {
       setLoading(true);
-
+      if(props.location.state!==undefined){
       const playlistResp = await axios.get(
         "http://localhost:8888/spotify-playlist?tok=" +
           props.location.state[0].token +
@@ -96,14 +96,18 @@ const Playlist = (props: any) => {
         data.values.push({ x: Object.keys(artists)[i], y: artists[Object.keys(artists)[i]] });
       }
       setPlaylistData(playlist);
-
+    }
       setLoading(false);
     }
     fetchData();
   }, [props.match.params.id, props.location.state]);
 
-  //Builds list of character links
-  //TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
+  if(props.location.state===undefined){
+		return(
+			<Redirect to="/"/>
+		)
+	}
+
 
   const buildCard = (song: any, index: number, playlist: string) => {
     return (

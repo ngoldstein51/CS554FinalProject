@@ -40,6 +40,7 @@ function App() {
         <header className="App-header"></header>
         <Container>
           <div className="App-body">
+            
             <Route exact path="/" component={Home} />
             <Route
               exact
@@ -57,7 +58,7 @@ function App() {
                 />
               )}
             />
-            <Route exact path="/playlists/" component={Playlists} />
+            <Route exact path="/playlists/page/:pagenum" component={Playlists} />
             <Route
               exact
               path="/playlists/:id"

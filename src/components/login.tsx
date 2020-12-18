@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../App.css';
 import { Link } from 'react-router-dom';
+import {Button,makeStyles} from "@material-ui/core";
 
-// interface Spotify {
-//   display_name: string,
-//   id: string,
-//   email: string,
-//   external_urls: any,
-//   href: string,
-//   images: any,
-//   country: string
-// }
+const useStyles = makeStyles((theme) => ({
+	button: {
+	  backgroundColor: "lightgray",
+	  textDecoration: "none",
+	},
+  }));
+
 
 const Login = (props: any):JSX.Element => {
+  const classes=useStyles()
   const [ token, setToken ] = useState(undefined);
 
   function getHashParams() {
@@ -66,17 +66,16 @@ const Login = (props: any):JSX.Element => {
 	return (
 		<div>
       <h1>
-        Login Page
+        Welcome
       </h1>
-
-      <Link className='link' to='/login'>
-        Home
-      </Link>
+      <p>You have been successfully logged in with Spotify, please click the button below to view your playlists.</p>
       <Link className='link' to={{
-        pathname: "/playlists",
+        pathname: "/playlists/page/1",
         state: [{ token: token}]
       }}>
-        Playlists
+        <Button className={classes.button}>
+          Playlists
+          </Button>
       </Link>
       
 		</div>
