@@ -5,8 +5,9 @@ import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography ,makeSty
 import '../App.css';
 const useStyles = makeStyles((theme) => ({
 	root: {
-	  flexGrow: 1,
+	  flexGrow: 1
 	}
+
   }));
 
 const Playlists = (props:any) =>{
@@ -61,7 +62,7 @@ const Playlists = (props:any) =>{
 							<CardMedia
 								component='img'
 								image={playlist.images[0].url}
-								title='show image'
+								title='Playlist image'
 							/>
 							<CardContent>
 								<Typography variant='h5'>

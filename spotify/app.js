@@ -82,6 +82,7 @@ app.get('/spotify-playlist', async function(req, res) {
 
   let exists = await client.existsAsync(playlistKey);
   if(exists) {
+    console.log("Test")
     let playlist = await client.getAsync(playlistKey);
      res.send(JSON.parse(playlist));
   } else {

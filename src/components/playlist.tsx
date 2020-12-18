@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography,makeStyles } from '@material-ui/core';
+import { Card, CardContent, CardMedia, Grid, Typography,makeStyles } from '@material-ui/core';
 
 
 const useStyles = makeStyles((theme) => ({
 	root: {
 	  flexGrow: 1,
-	  flexDirection: 'row'
-	}
+	  margin:"auto"
+	  
+	},
+	details:{
+		display: 'flex',
+		  flexDirection: 'column',
+		  margin:"auto",
+	},
+	card: {
+		display:"flex",
+		flex: 'auto',
+		width:"100vh",
+		margin:"auto"	
+	},
+	cover: {
+		width: 100,
+		height: 100
+	  }
   }));
 
 const Playlist = (props:any) =>{
@@ -38,18 +54,20 @@ const Playlist = (props:any) =>{
     
 	//Builds list of character links
 	//TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
+	console.log(id)
     const buildCard = (song:any) => {
 		return (
-			<Grid item xs={12} sm={6} md={4} lg={4} xl={3} key={song.track.id}>
-				<Card className="card">
-					<CardActionArea>
-							<CardMedia
+			<Grid item xs={12} key={song.track.id}>
+				
+				<Card className={classes.card}>
+				<CardMedia className={classes.cover}
 								component='img'
 								image={song.track.album.images[0].url}
-								title='show image'
+								title='Album image'
 							/>
+				<div className={classes.details}>
 							<CardContent>
-								<Typography variant='h5'>
+								<Typography component="h5" variant='h5'>
 									{song.track.name}
 								</Typography>
 								<Typography variant="body1">
@@ -67,8 +85,7 @@ const Playlist = (props:any) =>{
 											</button>
 											</Link>
 							</CardContent>
-						
-					</CardActionArea>
+					</div>
 				</Card>
 			</Grid>
 		);
@@ -95,7 +112,7 @@ const Playlist = (props:any) =>{
 			
             return (
                 <div className={classes.root}>
-                    <h1>{playlistData["name"]}: {id}</h1>
+                    <h1>{playlistData["name"]}</h1>
 
                     <br />
                     <br />
