@@ -82,7 +82,6 @@ app.get('/spotify-playlist', async function(req, res) {
 
   let exists = await client.existsAsync(playlistKey);
   if(exists) {
-    console.log("Test")
     let playlist = await client.getAsync(playlistKey);
      res.send(JSON.parse(playlist));
   } else {
@@ -124,7 +123,7 @@ app.get('/callback', function(req, res) {
 
   // your application requests refresh and access tokens
   // after checking the state parameter
-
+  g
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;

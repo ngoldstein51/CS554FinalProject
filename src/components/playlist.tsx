@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardMedia, Grid, Typography,makeStyles } from '@material-ui/core';
-
+import {FaPlay} from 'react-icons/fa';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -54,13 +54,18 @@ const Playlist = (props:any) =>{
     
 	//Builds list of character links
 	//TODO: Make prettier, probably put everthing for each playlist into its own rectange with the album cover on the left or something
-	console.log(id)
-    const buildCard = (song:any) => {
+console.log(id)
+	const buildCard = (song:any, index: number, playlist: string) => {
 		return (
 			<Grid item xs={12} key={song.track.id}>
-				
 				<Card className={classes.card}>
-				<CardMedia className={classes.cover}
+              <div onClick={() => {
+                props.setURI(playlist);
+                props.setOffset(index);
+              }}>
+                <FaPlay/>
+              </div>
+			  		<CardMedia className={classes.cover}
 								component='img'
 								image={song.track.album.images[0].url}
 								title='Album image'
@@ -91,21 +96,20 @@ const Playlist = (props:any) =>{
 		);
 	};
 
-    
-    if (loading) {
-		return (
-			<div>
-				<h2>Loading....</h2>
-			</div>
-        );
-    }
-    //Build list of songs in playlist
-    else{
+  if (loading) {
+    return (
+      <div>
+        <h2>Loading....</h2>
+      </div>
+    );
+  }
+  //Build list of songs in playlist
+  else{
 		const tracks:Array<any> =playlistData["tracks"]["items"]
         card =
 			tracks &&
-			tracks.map((song) => {
-				return buildCard(song);
+			tracks.map((song, index) => {
+				return buildCard(song, index, playlistData['uri']);
 
     });
 			//TODO: pagination
@@ -122,7 +126,7 @@ const Playlist = (props:any) =>{
                 </div>
             );
 
-    }
+  }
 };
 
 export default Playlist;
