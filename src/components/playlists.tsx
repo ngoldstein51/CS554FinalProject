@@ -12,11 +12,25 @@ import {
 } from "@material-ui/core";
 import "../App.css";
 const useStyles = makeStyles((theme) => ({
-	root: {
-	  flexGrow: 1
-	}
-
-  }));
+  root: {
+    flexGrow: 1,
+    padding: "0px",
+  },
+  card: {
+    flex: "auto",
+    margin: "auto",
+    height: 300,
+    backgroundColor: "lightgrey",
+  },
+  text: {
+    fontSize: "1rem",
+    lineHeight: "1",
+  },
+  link: {
+    color: "black",
+    textDecoration: "none",
+  },
+}));
 
 const Playlists = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -73,29 +87,37 @@ const Playlists = (props: any) => {
     }
     return (
       <Grid item xs={12} sm={6} md={4} lg={4} xl={3} key={playlist.id}>
-        <Card className="card">
-          <CardActionArea>
-            {media}
-            <CardContent>
-              <Typography variant="h5">
-                <h2>{playlist.name}</h2>
-              </Typography>
-              <Typography variant="body1">
-                By: {playlist.owner.display_name}
-              </Typography>
-              <Typography variant="body2">
-                Tracks: {playlist.tracks.total}
-              </Typography>
-              <Link
-                to={{
-                  pathname: `/playlists/${playlist.id}`,
-                  state: [{ token: props.location.state[0].token }],
-                }}
-              >
-                <button>Listen</button>
-              </Link>
-            </CardContent>
-          </CardActionArea>
+        <Card className={classes.card}>
+          <Link
+            className={classes.link}
+            to={{
+              pathname: `/playlists/${playlist.id}`,
+              state: [{ token: props.location.state[0].token }],
+            }}
+          >
+            <CardActionArea>
+              <CardContent>
+                <Typography variant="h5" className={classes.text}>
+                  <h2>{playlist.name}</h2>
+                </Typography>
+                <Typography
+                  variant="body1"
+                  className={classes.text}
+                  component="p"
+                >
+                  By: {playlist.owner.display_name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.text}
+                  component="p"
+                >
+                  Tracks: {playlist.tracks.total}
+                </Typography>
+              </CardContent>
+              {media}
+            </CardActionArea>
+          </Link>
         </Card>
       </Grid>
     );

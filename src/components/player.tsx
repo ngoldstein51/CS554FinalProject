@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { isConstructorDeclaration } from 'typescript';
 import {FaPlay, FaPause} from 'react-icons/fa';
 import '../App.css';
 
@@ -161,7 +160,7 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
               }
             }
           }}>
-            <FaPlay/>
+            <FaPlay size={30}/>
           </div>}
         {playerReady && (trackName !== 'No Track') && playbackOn &&
           <div onClick={() => {
@@ -169,7 +168,7 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
               pauseTrack();
             }
           }}>
-            <FaPause/>
+            <FaPause size={30}/>
           </div>}
       </div>
     </div>
