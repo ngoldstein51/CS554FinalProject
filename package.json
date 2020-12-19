@@ -17,7 +17,7 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "node spotify/app.js"
+    "start": "redis-server & node spotify/app.js"
   },
   "eslintConfig": {
     "extends": [
