@@ -11,7 +11,7 @@ const Song = (props:any) =>{
 		async function fetchData() {
 			setLoading(true);
 			if(props.location.state!==undefined){
-			const songResp: any = await axios.get('http://localhost:8888/spotify-song?tok='+props.location.state[0].token+'&id='+props.match.params.id);
+			const songResp: any = await axios.get('https://cs554-final.herokuapp.com/spotify-song?tok='+props.location.state[0].token+'&id='+props.match.params.id);
 			
 			const song: any = songResp['data'];
 			console.log(songResp)

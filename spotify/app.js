@@ -16,14 +16,14 @@ var bluebird = require("bluebird");
 var redis = require("redis");
 let axios = require("axios");
 
-const client = redis.createClient();
+const client = redis.createClient(process.env.REDIS_URL);
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 var client_id = "e66c0a3b27c74129bc4e155e8300278e"; // Your client id
 var client_secret = "88019a73ec9e4893805bd5125db4b7f3"; // Your secret
-var redirect_uri = "http://localhost:8888/callback"; // Your redirect uri
+var redirect_uri = "http://cs554-final.herokuapp.com/callback"; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -89,7 +89,6 @@ app.get("/spotify-playlist", async function (req, res) {
   } else {
     try {
       const reqUrl = "https://api.spotify.com/v1/playlists/" + id;
-      console.log(reqUrl);
       const { data } = await axios.get(reqUrl, {
         headers: {
           Authorization: "Bearer " + tok,
@@ -98,7 +97,6 @@ app.get("/spotify-playlist", async function (req, res) {
       await client.setAsync(playlistKey, JSON.stringify(data));
       res.send(data);
     } catch (e) {
-      console.log(e);
       throw new Error("Request failed");
     }
   }
@@ -168,7 +166,7 @@ app.get("/callback", function (req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function (error, response, body) {
-          console.log(body);
+          //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
@@ -218,5 +216,4 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
-console.log("Listening on 8888");
-app.listen(8888);
+app.listen(process.env.PORT || 3000);

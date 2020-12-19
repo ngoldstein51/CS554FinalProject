@@ -17,7 +17,7 @@ const Home = ():JSX.Element => {
 				Welcome to Spotify Playlist Website
 			</h1>
 			<p>This is a website where you can view and listen to Spotify playlists if you sign in with your account.</p>
-			<a href="http://localhost:8888/login" >
+			<a href="https://cs554-final.herokuapp.com/login" >
 				<Button className={classes.button}>Login with Spotify</Button>	
 			</a>
 

@@ -71,7 +71,7 @@ const Playlist = (props: any) => {
       setLoading(true);
       if(props.location.state!==undefined){
       const playlistResp = await axios.get(
-        "http://localhost:8888/spotify-playlist?tok=" +
+        "https://cs554-final.herokuapp.com/spotify-playlist?tok=" +
           props.location.state[0].token +
           "&id=" +
           props.match.params.id
@@ -176,6 +176,7 @@ const Playlist = (props: any) => {
 
         <br />
         <br />
+        <h2>Artist Breakdown</h2>
         <PieChart
           data={data}
           width={1000}
