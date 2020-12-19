@@ -16,14 +16,14 @@ var bluebird = require("bluebird");
 var redis = require("redis");
 let axios = require("axios");
 
-const client = redis.createClient();
+const client = redis.createClient(process.env.REDIS_URL);
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
 var client_id = "e66c0a3b27c74129bc4e155e8300278e"; // Your client id
 var client_secret = "88019a73ec9e4893805bd5125db4b7f3"; // Your secret
-var redirect_uri = "http://cs554-final.herokuapp.com:" + process.env.PORT + "/callback"; // Your redirect uri
+var redirect_uri = "http://cs554-final.herokuapp.com/callback"; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -51,6 +51,7 @@ app
   .use(cookieParser());
 
 app.get("/", function(req, res) {
+  console.log('uuuuuuu');
   res.send("<p>This is the backend for the CS554 final project!</p>");
 });
 
@@ -222,5 +223,5 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
-console.log("Listening on ", process.env.PORT);
+console.log("Listening on ", process.env.PORT || 3000);
 app.listen(process.env.PORT || 3000);
