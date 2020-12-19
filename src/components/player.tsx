@@ -141,6 +141,7 @@ const Player = ({ token, uri, offset }: props): JSX.Element => {
       }).then((ev) => {
         setPlaybackOn(true);
         setPlaybackPaused(false);
+        setProgress(0);
         getCurrentPlayback();
         console.log("Playing song");
       });
