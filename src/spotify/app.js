@@ -23,7 +23,7 @@ bluebird.promisifyAll(redis.Multi.prototype);
 
 var client_id = "e66c0a3b27c74129bc4e155e8300278e"; // Your client id
 var client_secret = "88019a73ec9e4893805bd5125db4b7f3"; // Your secret
-var redirect_uri = "http://cs554-final.herokuapp.com:8888/callback"; // Your redirect uri
+var redirect_uri = "http://localhost:8888/callback"; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -49,10 +49,6 @@ app
   .use(express.static(__dirname + "/public"))
   .use(cors())
   .use(cookieParser());
-
-app.get("/", function(req, res) {
-  res.send("<p>This is the backend for the CS554 final project!</p>");
-});
 
 app.get("/spotify-song", async function (req, res) {
   let tok = req.query.tok;
@@ -222,5 +218,4 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
-console.log("Listening on 8888");
-app.listen(8888);
+module.exports = { app };
