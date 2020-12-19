@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Redirect,Link } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import {
   Card,
   CardActionArea,
@@ -8,15 +8,20 @@ import {
   CardMedia,
   Grid,
   Typography,
-  makeStyles
+  makeStyles,
 } from "@material-ui/core";
-import {Pagination,PaginationItem} from '@material-ui/lab';
+import { Pagination, PaginationItem } from "@material-ui/lab";
 import "../App.css";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     padding: "0px",
+    margin: '0 auto',
+  },
+  pagination: {
+    display:'flex', 
+    justifyContent:'center'
   },
   card: {
     flex: "auto",
@@ -33,28 +38,29 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
   },
   page: {
-	  display:"flex",
-	  marginLeft:"auto",
-	  marginRight:"auto",
-	  paddingBottom:20,
-  }
-
+    display: "flex",
+    marginLeft: "auto",
+    marginRight: "auto",
+    paddingBottom: 20,
+  },
 }));
 
 const Playlists = (props: any) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [playlistData, setPlaylistData] = useState<Array<object>>([]);
-  const [pageNum, setPageNum] = useState<number>(NaN);
+  const [pageNum, setPageNum] = useState<number>(1);
   const [totalPlaylists, setTotalPlaylists] = useState<number>(NaN);
   let card: Array<any> = [];
   const classes: any = useStyles();
 
-  const getPlayLists = async (tok: string,pagenum:number) => {
+  const getPlayLists = async (tok: string, pagenum: number) => {
     try {
-      const reqUrl = `https://api.spotify.com/v1/me/playlists?limit=20&offset=${20*(pagenum-1)}`;
+      const reqUrl = `https://api.spotify.com/v1/me/playlists?limit=20&offset=${
+        20 * (pagenum - 1)
+      }`;
       const { data } = await axios.get(reqUrl, {
         headers: {
-		  Authorization: "Bearer " + tok
+          Authorization: "Bearer " + tok,
         },
       });
       return data;
@@ -63,32 +69,33 @@ const Playlists = (props: any) => {
     }
   };
 
-
-
   //load
   useEffect((): void => {
     async function fetchData() {
       setLoading(true);
-		if(props.location.state!==undefined){
-			setPageNum(props.match.params.pagenum);
-			const playlists = await getPlayLists(props.location.state[0].token,props.match.params.pagenum);
+      if (props.location.state !== undefined) {
+        setPageNum(props.match.params.pagenum);
+        const playlists = await getPlayLists(
+          props.location.state[0].token,
+          props.match.params.pagenum
+        );
 
-			setPlaylistData(playlists.items);
-			setTotalPlaylists(playlists.total)
-   
-			
-			setLoading(false);
-		}
+        setPlaylistData(playlists.items);
+        setTotalPlaylists(playlists.total);
+
+        setLoading(false);
+      }
     }
     fetchData();
   }, [props.match.params.pagenum, props.location.state]);
 
-  
-	if(props.location.state===undefined){
-		return(
-			<Redirect to="/"/>
-		)
-	}
+  useEffect(() => {
+    console.log('pageNum:', pageNum);
+  }, [pageNum]);
+
+  if (props.location.state === undefined) {
+    return <Redirect to="/" />;
+  }
 
   const buildCard = (playlist: any) => {
     let media = <div></div>;
@@ -100,7 +107,7 @@ const Playlists = (props: any) => {
           title="show image"
         />
       );
-	}
+    }
     return (
       <Grid item xs={12} sm={6} md={4} lg={4} xl={3} key={playlist.id}>
         <Card className={classes.card}>
@@ -113,8 +120,12 @@ const Playlists = (props: any) => {
           >
             <CardActionArea>
               <CardContent>
-                <Typography variant="h2"  component="h2" className={classes.text}>
-                 {playlist.name}
+                <Typography
+                  variant="h2"
+                  component="h2"
+                  className={classes.text}
+                >
+                  {playlist.name}
                 </Typography>
                 <Typography
                   variant="body1"
@@ -153,30 +164,33 @@ const Playlists = (props: any) => {
       playlistData.map((playlist) => {
         return buildCard(playlist);
       });
-	//TODO: pagination
-	console.log(pageNum)
+    //TODO: pagination
     return (
       <div className={classes.root}>
         <h1>Your Playlists</h1>
+        <Pagination
+          className={classes.pagination}
+          page={pageNum}
+          count={Math.ceil(totalPlaylists / 20)}
+          variant="outlined"
+          color="primary"
+          siblingCount={4}
+          renderItem={(item) => (
+            <PaginationItem
+              component={Link}
+              to={{
+                pathname: `/playlists/page/${item.page}`,
+                state: [{ token: props.location.state[0].token }],
+              }}
+              {...item}
+            />
+          )}
+        />
         <br />
         <br />
-		<Pagination  page={pageNum} count={Math.ceil(totalPlaylists/20)} variant="outlined" color="primary" 		
-		siblingCount={4} 
-		renderItem={(item) => (
-			<PaginationItem
-			  component={Link}
-			  to={{"pathname":`/playlists/page/${item.page}`,
-			  "state": [{ token: props.location.state[0].token}]
-			}}
-
-			  {...item}
-			/>
-		)}
-		/>
         <Grid container spacing={5}>
-		{card}
-		
-		</Grid>
+          {card}
+        </Grid>
       </div>
     );
   }
