@@ -51,6 +51,7 @@ app
   .use(cookieParser());
 
 app.get("/", function(req, res) {
+  console.log('uuuuuuu');
   res.send("<p>This is the backend for the CS554 final project!</p>");
 });
 
@@ -222,5 +223,5 @@ app.get("/refresh_token", function (req, res) {
   });
 });
 
-console.log("Listening on ", process.env.PORT);
+console.log("Listening on ", process.env.PORT || 3000);
 app.listen(process.env.PORT || 3000);
